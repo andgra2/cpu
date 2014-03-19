@@ -117,6 +117,9 @@ extern bool cpu_run_step(struct cpu *cpu)
 	case instr_num_jump:
 		instr_jump(cpu);
 		break;
+	case instr_num_jump_cond:
+		instr_jump_cond(cpu);
+		break;
 	case instr_num_copy:
 		instr_copy(cpu);
 		break;

@@ -12,6 +12,7 @@ enum instr_arg_type {
 enum instr_num {
 	instr_num_terminate,
 	instr_num_jump,
+	instr_num_jump_cond,
 	instr_num_copy,
 	instr_num_add,
 };
