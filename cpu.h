@@ -14,10 +14,16 @@ enum instr_num {
 	instr_num_jump,
 	instr_num_jump_cond,
 	instr_num_copy,
-	instr_num_add,
 	instr_num_print,
+	instr_num_add,
+	instr_num_sub,
+	instr_num_mul,
+	instr_num_div,
 	instr_num_and,
 	instr_num_or,
+	instr_num_xor,
+	instr_num_shl,
+	instr_num_shr,
 };
 
 struct cpu {
