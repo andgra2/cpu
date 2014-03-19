@@ -86,14 +86,17 @@ static void instr_jump(struct cpu *cpu)
 
 static void instr_jump_cond(struct cpu *cpu)
 {
-	if (arg_get(cpu, 0))
+	if (arg_get(cpu, 0)) {
 		cpu->pc_ni = arg_get(cpu, 1);
-	cpu->pc_ni += 3;
+	} else {
+		cpu->pc_ni += 3;
+	}
 }
 
 static void instr_copy(struct cpu *cpu)
 {
-	arg_set(cpu, 1, arg_get(cpu, 0));
+	cell a = arg_get(cpu, 0);
+	arg_set(cpu, 1, a);
 	cpu->pc_ni += 3;
 }
 
