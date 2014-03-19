@@ -116,7 +116,7 @@ extern void cpu_run_init(struct cpu *cpu, cell pc_ni)
 
 extern bool cpu_run_step(struct cpu *cpu)
 {
-	switch (memory_get(cpu->m, cpu->pc_ni))
+	switch (in_get(cpu))
 	{
 	case instr_num_terminate:
 		instr_terminate(cpu);
@@ -135,6 +135,9 @@ extern bool cpu_run_step(struct cpu *cpu)
 		break;
 	case instr_num_print:
 		instr_print(cpu);
+		break;
+	default:
+		printf("Invalid instruction.\n");
 		break;
 	}
 
