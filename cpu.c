@@ -91,6 +91,18 @@ static void instr_add(struct cpu *cpu)
 	cpu->pc_ni += 4;
 }
 
+static void instr_and(struct cpu *cpu)
+{
+	arg_set(cpu, 1, arg_get(cpu, 1) & arg_get(cpu, 0));
+	cpu->pc_ni += 3;
+}
+
+static void instr_or(struct cpu *cpu)
+{
+	arg_set(cpu, 1, arg_get(cpu, 1) | arg_get(cpu, 0));
+	cpu->pc_ni += 3;
+}
+
 static void instr_print(struct cpu *cpu)
 {
 	int value = arg_get(cpu, 0);
@@ -135,6 +147,12 @@ extern bool cpu_run_step(struct cpu *cpu)
 		break;
 	case instr_num_print:
 		instr_print(cpu);
+		break;
+	case instr_num_and:
+		instr_and(cpu);
+		break;
+	case instr_num_or:
+		instr_or(cpu);
 		break;
 	default:
 		printf("Invalid instruction.\n");

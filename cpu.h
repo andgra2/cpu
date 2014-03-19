@@ -16,6 +16,8 @@ enum instr_num {
 	instr_num_copy,
 	instr_num_add,
 	instr_num_print,
+	instr_num_and,
+	instr_num_or,
 };
 
 struct cpu {
