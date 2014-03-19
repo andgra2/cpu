@@ -3,6 +3,19 @@
 
 #include "memory.h"
 
+enum instr_arg_type {
+	im,
+	mem,
+	mem2
+};
+
+enum instr_num {
+	instr_num_terminate,
+	instr_num_jump,
+	instr_num_copy,
+	instr_num_add,
+};
+
 struct cpu {
 	struct memory *m;
 	cell pc_ni;

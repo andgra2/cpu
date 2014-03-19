@@ -1,17 +1,5 @@
 #include "cpu.h"
 
-enum instr_arg_type {
-	im,
-	mem,
-	mem2
-};
-
-enum instr_num {
-	instr_num_terminate,
-	instr_num_jump,
-	instr_num_copy
-};
-
 static enum instr_arg_type iat_get(struct cpu *cpu, cell ian)
 {
 	cell c = memory_get(cpu->m, cpu->pc_ni);
@@ -131,6 +119,9 @@ extern bool cpu_run_step(struct cpu *cpu)
 		break;
 	case instr_num_copy:
 		instr_copy(cpu);
+		break;
+	case instr_num_add:
+		instr_add(cpu);
 		break;
 	}
 
