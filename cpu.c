@@ -91,6 +91,13 @@ static void instr_add(struct cpu *cpu)
 	cpu->pc_ni += 4;
 }
 
+static void instr_print(struct cpu *cpu)
+{
+	int value = arg_get(cpu, 0);
+	printf("%c", value);
+	cpu->pc_ni += 2;
+}
+
 static cell in_get(struct cpu *cpu)
 {
 	return memory_get(cpu->m, cpu->pc_ni) & 0x0000FFFF;
@@ -125,6 +132,9 @@ extern bool cpu_run_step(struct cpu *cpu)
 		break;
 	case instr_num_add:
 		instr_add(cpu);
+		break;
+	case instr_num_print:
+		instr_print(cpu);
 		break;
 	}
 
