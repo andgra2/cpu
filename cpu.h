@@ -1,40 +1,21 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include "memory.h"
-
-enum instr_arg_type {
-	im,
-	mem,
-	mem2
-};
-
-enum instr_num {
-	instr_num_terminate,
-	instr_num_jump,
-	instr_num_jump_cond,
-	instr_num_copy,
-	instr_num_print,
-	instr_num_add,
-	instr_num_sub,
-	instr_num_mul,
-	instr_num_div,
-	instr_num_and,
-	instr_num_or,
-	instr_num_xor,
-	instr_num_shl,
-	instr_num_shr,
-};
+#include "mem.h"
 
 struct cpu {
-	struct memory *m;
-	cell pc_ni;
+	struct mem *m;
+	cell pc_curr_instr;
+	cell *arg_ptr_1;
+	cell *arg_ptr_2;
+	cell *arg_ptr_3;
+	cell *arg_ptr_4;
 };
 
-void cpu_create(struct cpu *cpu, struct memory *m);
-void cpu_run_init(struct cpu *cpu, cell pc_ni);
-bool cpu_run_step(struct cpu *cpu);
-bool cpu_is_run(struct cpu *cpu);
+void cpu_create(struct cpu *u, struct mem *m);
+void cpu_run_init(struct cpu *u, cell pc_start_instr);
+bool cpu_run_step(struct cpu *u);
+bool cpu_is_run(struct cpu *u);
 
 #endif
 

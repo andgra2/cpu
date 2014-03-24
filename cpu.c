@@ -1,162 +1,101 @@
 #include "cpu.h"
-#include <stdio.h>
 
-typedef cell (*BINOP)(cell a, cell b);
+#include "cpu-instr.c"
 
-static cell binop_add(cell a, cell b) { return a + b; }
-static cell binop_sub(cell a, cell b) { return a - b; }
-static cell binop_mul(cell a, cell b) { return a * b; }
-static cell binop_div(cell a, cell b) { return a / b; }
-static cell binop_and(cell a, cell b) { return a & b; }
-static cell binop_or(cell a, cell b) { return a | b; }
-static cell binop_xor(cell a, cell b) { return a ^ b; }
-static cell binop_shl(cell a, cell b) { return a << b; }
-static cell binop_shr(cell a, cell b) { return a >> b; }
+enum arg_type {
+	im,
+	mem,
+	mem2,
+};
 
-static enum instr_arg_type iat_get(struct cpu *cpu, cell ian)
+static enum arg_type at_from_an(struct cpu *u, size_t an)
 {
-	cell c = memory_get(cpu->m, cpu->pc_ni);
-	return (enum instr_arg_type) (c >> (16 + 4 * ian)) & 0x0000000F;
+	cell c = *mem_ptr(u->m, u->pc_curr_instr);
+	
+	return (enum arg_type) ((c >> (12 + 4 * an)) & 0x0000000F);
 }
 
-static cell arg_im_get(struct cpu *cpu, cell ian)
+static cell *arg_ptr_im(struct cpu *u, size_t an)
 {
-	return memory_get(cpu->m, cpu->pc_ni + ian + 1);
+	return mem_ptr(u->m, u->pc_curr_instr + an + 1);
 }
 
-static cell arg_mem_get(struct cpu *cpu, cell ian)
+static cell *arg_ptr_mem(struct cpu *u, size_t an)
 {
-	cell pc = arg_im_get(cpu, ian);
-	return memory_get(cpu->m, pc);
+	cell pc = *arg_ptr_im(u, an);
+	
+	return mem_ptr(u->m, pc);
 }
 
-static void arg_mem_set(struct cpu *cpu, cell ian, cell c)
+static cell *arg_ptr_mem2(struct cpu *u, size_t an)
 {
-	cell pc = arg_im_get(cpu, ian);
-	memory_set(cpu->m, pc, c);
+	cell pc = *arg_ptr_mem(u, an);
+
+	return mem_ptr(u->m, pc);
 }
 
-static cell arg_mem2_get(struct cpu *cpu, cell ian)
+static cell *arg_ptr(struct cpu *u, size_t an)
 {
-	cell pc = arg_mem_get(cpu, ian);
-	return memory_get(cpu->m, pc);
-}
-
-static void arg_mem2_set(struct cpu *cpu, cell ian, cell c)
-{
-	cell pc = arg_mem_get(cpu, ian);
-	memory_set(cpu->m, pc, c);
-}
-
-static cell arg_get(struct cpu *cpu, cell ian)
-{
-	switch (iat_get(cpu, ian))
+	cell *ap;
+	switch (at_from_an(u, an))
 	{
 	case im:
-		return arg_im_get(cpu, ian);
+		ap = arg_ptr_im(u, an);
+		break;
 	case mem:
-		return arg_mem_get(cpu, ian);
-	case mem2:
-		return arg_mem2_get(cpu, ian);
-	}
-}
-
-static void arg_set(struct cpu *cpu, cell ian, cell c)
-{
-	switch (iat_get(cpu, ian))
-	{
-	case mem:
-		arg_mem_set(cpu, ian, c);
+		ap = arg_ptr_mem(u, an);
 		break;
 	case mem2:
-		arg_mem_set(cpu, ian, c);
+		ap = arg_ptr_mem2(u, an);
 		break;
 	}
+
+	return ap;
 }
 
-static void instr_terminate(struct cpu *cpu)
+static size_t curr_ii(struct cpu *u)
 {
-	cpu->pc_ni = pc_null;
+	return *mem_ptr(u->m, u->pc_curr_instr) & 0x0000FFFF;
 }
 
-static void instr_jump(struct cpu *cpu)
+void cpu_create(struct cpu *u, struct mem *m)
 {
-	cpu->pc_ni = arg_get(cpu, 0);
+	u->m = m;
+	u->pc_curr_instr = pc_null;
 }
 
-static void instr_jump_cond(struct cpu *cpu)
+void cpu_run_init(struct cpu *u, cell pc_start_instr)
 {
-	if (arg_get(cpu, 0)) {
-		cpu->pc_ni = arg_get(cpu, 1);
-	} else {
-		cpu->pc_ni += 3;
-	}
+	u->pc_curr_instr = pc_start_instr;
 }
 
-static void instr_copy(struct cpu *cpu)
+bool cpu_run_step(struct cpu *u)
 {
-	cell a = arg_get(cpu, 0);
-	arg_set(cpu, 1, a);
-	cpu->pc_ni += 3;
-}
+	size_t ii = curr_ii(u);
+	
+	size_t na = instructions[ii].num_args;
 
-static void instr_binop(struct cpu *cpu, BINOP binop)
-{
-	cell a = arg_get(cpu, 0);
-	cell b = arg_get(cpu, 1);
-	arg_set(cpu, 2, binop(a, b));
-	cpu->pc_ni += 4;
-}
-
-static void instr_print(struct cpu *cpu)
-{
-	int value = arg_get(cpu, 0);
-	printf("%c", value);
-	fflush(stdout);
-	cpu->pc_ni += 2;
-}
-
-static cell in_get(struct cpu *cpu)
-{
-	return memory_get(cpu->m, cpu->pc_ni) & 0x0000FFFF;
-}
-
-extern void cpu_create(struct cpu *cpu, struct memory *m)
-{
-	cpu->m = m;
-	cpu->pc_ni = pc_null;
-}
-
-extern void cpu_run_init(struct cpu *cpu, cell pc_ni)
-{
-	cpu->pc_ni = pc_ni;
-}
-
-extern bool cpu_run_step(struct cpu *cpu)
-{
-	switch (in_get(cpu))
+	switch (na)
 	{
-	case instr_num_terminate: instr_terminate(cpu); break;
-	case instr_num_jump: instr_jump(cpu); break;
-	case instr_num_jump_cond: instr_jump_cond(cpu); break;
-	case instr_num_copy: instr_copy(cpu); break;
-	case instr_num_print: instr_print(cpu); break;
-	case instr_num_add: instr_binop(cpu, binop_add); break;
-	case instr_num_sub: instr_binop(cpu, binop_sub); break;
-	case instr_num_mul: instr_binop(cpu, binop_mul); break;
-	case instr_num_div: instr_binop(cpu, binop_div); break;
-	case instr_num_and: instr_binop(cpu, binop_and); break;
-	case instr_num_or: instr_binop(cpu, binop_or); break;
-	case instr_num_xor: instr_binop(cpu, binop_xor); break;
-	case instr_num_shl: instr_binop(cpu, binop_shl); break;
-	case instr_num_shr: instr_binop(cpu, binop_shr); break;
-	default: printf("Invalid instruction.\n"); break;
+	case 4:
+		u->arg_ptr_1 = arg_ptr(u, 4);
+	case 3:
+		u->arg_ptr_2 = arg_ptr(u, 3);
+	case 2:
+		u->arg_ptr_3 = arg_ptr(u, 2);
+	case 1:
+		u->arg_ptr_4 = arg_ptr(u, 1);
 	}
 
-	return cpu->pc_ni != pc_null;
+	u->pc_curr_instr += na + 1;
+
+	instructions[ii].func(u);
+
+	return u->pc_curr_instr != pc_null;
 }
 
-extern bool cpu_is_run(struct cpu *cpu)
+bool cpu_is_run(struct cpu *u)
 {
-	return cpu->pc_ni != pc_null;
+	return u->pc_curr_instr != pc_null;
 }
+
