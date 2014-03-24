@@ -10,18 +10,18 @@ INSTR(terminate) { CI = pc_null; }
 INSTR(jump) { CI = A1; }
 INSTR(cond_jump) { if (A1) CI = A2; }
 INSTR(cond_jump2) { if (A1) CI = A2; else CI = A3; }
-INSTR(copy) { A2 = A1; }
-INSTR(add) { A3 = A1 + A2; }
-INSTR(sub) { A3 = A1 - A2; }
-INSTR(mul) { A3 = A1 * A2; }
-INSTR(div) { A3 = A1 / A2; }
-INSTR(mod) { A3 = A1 % A2; }
-INSTR(or) { A3 = A1 | A2; }
-INSTR(and) { A3 = A1 & A2; }
-INSTR(xor) { A3 = A1 ^ A2; }
-INSTR(not) { A2 = ~ A1; }
-INSTR(shl) { A3 = A1 << A2; }
-INSTR(shr) { A3 = A1 >> A2; }
+INSTR(copy) { A1 = A2; }
+INSTR(add) { A1 = A2 + A3; }
+INSTR(sub) { A1 = A2 - A3; }
+INSTR(mul) { A1 = A2 * A3; }
+INSTR(div) { A1 = A2 / A3; }
+INSTR(mod) { A1 = A2 % A3; }
+INSTR(or) { A1 = A2 | A3; }
+INSTR(and) { A1 = A2 & A3; }
+INSTR(xor) { A1 = A2 ^ A3; }
+INSTR(not) { A1 = ~ A2; }
+INSTR(shl) { A1 = A2 << A3; }
+INSTR(shr) { A1 = A2 >> A3; }
 INSTR(print) { printf("%c", A1); fflush(stdout); }
 INSTR(print_cell) { printf("%u", A1); fflush(stdout); }
 INSTR(print_cell_hex) { printf("%x", A1); fflush(stdout); }
