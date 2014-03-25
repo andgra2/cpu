@@ -1,0 +1,14 @@
+
+* Implement an assembler with a textfile as input (andgra2 is working on that, asm-dev branch).
+
+  * Debug f_ch_stream__test.c (gives some errors with valgrind).
+
+  * Implement ch_tok_stream.*
+
+  ...
+
+* Add more instructions (cpu-instr.c).
+
+* Add functions for dumping the state of the processor and memory to a file on disk. 
+  (mem.*, cpu.*).
+
