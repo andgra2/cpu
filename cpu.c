@@ -58,7 +58,7 @@ static size_t curr_ii(struct cpu *u)
 	return *mem_ptr(u->m, u->pc_curr_instr) & 0x0000FFFF;
 }
 
-void cpu_create(struct cpu *u, struct mem *m)
+void cpu_initialize(struct cpu *u, struct mem *m)
 {
 	u->m = m;
 	u->pc_curr_instr = pc_null;

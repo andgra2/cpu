@@ -12,7 +12,7 @@ struct cpu {
 	cell *arg_ptr_4;
 };
 
-void cpu_create(struct cpu *u, struct mem *m);
+void cpu_initialize(struct cpu *u, struct mem *m);
 void cpu_run_init(struct cpu *u, cell pc_start_instr);
 bool cpu_run_step(struct cpu *u);
 bool cpu_is_run(struct cpu *u);
