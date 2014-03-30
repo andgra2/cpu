@@ -17,9 +17,9 @@ int main()
 
 	printf("\n");
 
-	free(sc);
-
 	ret = 0;
+
+	free(sc);
 out_1:
 	return ret;
 }
