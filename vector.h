@@ -18,9 +18,9 @@ bool vector_create(
 	size_t max_num_vals_auto_incr
 );
 void vector_destroy(struct vector *v);
-void *vector_vals(struct vector *v);
-size_t vector_num_vals(struct vector *v);
-size_t vector_max_num_vals(struct vector *v);
+void *vector_get_vals(struct vector *v);
+size_t vector_get_num_vals(struct vector *v);
+size_t vector_get_max_num_vals(struct vector *v);
 bool vector_resize(struct vector *v, size_t max_num_vals_new);
 void vector_shrink(struct vector *v);
 bool vector_push_back(struct vector *v, const void *val);

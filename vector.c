@@ -27,11 +27,11 @@ bool vector_create(
 
 void vector_destroy(struct vector *v) { free(v->vals); }
 
-void *vector_vals(struct vector *v) { return v->vals; }
+void *vector_get_vals(struct vector *v) { return v->vals; }
 
-size_t vector_num_vals(struct vector *v) { return v->num_vals; }
+size_t vector_get_num_vals(struct vector *v) { return v->num_vals; }
 
-size_t vector_max_num_vals(struct vector *v) { return v->max_num_vals; }
+size_t vector_get_max_num_vals(struct vector *v) { return v->max_num_vals; }
 
 bool vector_resize(struct vector *v, size_t max_num_vals)
 {
