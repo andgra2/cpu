@@ -2,11 +2,9 @@
 
 int main()
 {
-	int ret;
-
 	char s[] = "Hello!";
 	char *sc;
-	if ((sc = str_clone(s)) == NULL) { ret = -1; goto out_1; }
+	if ((sc = str_clone(s)) == NULL) return -1;
 	printf("%s\n", sc);
 
 	printf("\n");
@@ -17,10 +15,14 @@ int main()
 
 	printf("\n");
 
-	ret = 0;
-
 	free(sc);
-out_1:
-	return ret;
+
+	char *sc2;
+	if ((sc2 = str_clone_sub(s + 1, s + 5)) == NULL) return -2;
+	printf("%s\n", sc2);
+
+	free(sc2);
+
+	return 0;
 }
 
