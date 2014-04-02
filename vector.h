@@ -17,6 +17,7 @@ bool vector_create(
 	size_t max_num_vals,
 	size_t max_num_vals_auto_incr
 );
+void *vector_move(struct vector *v, size_t *num_vals);
 void vector_destroy(struct vector *v);
 void *vector_get_vals(struct vector *v);
 size_t vector_get_num_vals(struct vector *v);

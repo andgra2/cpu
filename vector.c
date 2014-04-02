@@ -25,6 +25,18 @@ bool vector_create(
 	return true;
 }
 
+void *vector_move(struct vector *v, size_t *num_vals)
+{
+	*num_vals = v->num_vals;
+
+	vector_shrink(v);
+
+	void *ret = v->vals;
+	v->vals = NULL;
+
+	return ret;
+}
+
 void vector_destroy(struct vector *v) { free(v->vals); }
 
 void *vector_get_vals(struct vector *v) { return v->vals; }

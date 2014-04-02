@@ -62,6 +62,57 @@ int main()
 	print_int_vector(&v);
 
 	vector_destroy(&v);
+
+	printf("\n");
+
+	struct vector v2;
+	if (!vector_create(&v2, sizeof(int), 2, 2)) return -4;
+	print_int_vector(&v2);
+
+	printf("\n");
+
+	x = 2;
+	if (!vector_push_back(&v2, &x)) {
+		vector_destroy(&v2);
+		return -5;
+	}
+	print_int_vector(&v2);
+
+	printf("\n");
+
+	x = 3;
+	if (!vector_push_back(&v2, &x)) {
+		vector_destroy(&v2);
+		return -6;
+	}
+	print_int_vector(&v2);
+
+	printf("\n");
+
+	x = 5;
+	if (!vector_push_back(&v2, &x)) {
+		vector_destroy(&v2);
+		return -7;
+	}
+	print_int_vector(&v2);
+
+	printf("\n");
+
+	int *arr2;
+	int arr_size;
+	arr2 = vector_move(&v2, (void *) &arr_size);
+	printf("{");
+	for (int i = 0; i != arr_size; ++i) {
+		if (i != 0) printf(", ");
+		printf("%d", arr2[i]);
+	}
+	printf("}\n");
+	free(arr2);
+
+	printf("\n");
+
+	vector_destroy(&v2);
+
 	return 0;
 }
 
