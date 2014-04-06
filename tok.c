@@ -205,7 +205,7 @@ static const char *tokenize_ident(const char *p)
 	if (!(char_is_letter(*p) || *p == '_')) return NULL;
 	++p;
 
-	while (char_is_letter(*p)) ++p;
+	while (char_is_letter(*p) || *p == '_' || char_is_dec_dig(*p)) ++p;
 
 	return p;
 }
