@@ -31,10 +31,7 @@ void *vector_move(struct vector *v, size_t *num_vals)
 
 	vector_shrink(v);
 
-	void *ret = v->vals;
-	v->vals = NULL;
-
-	return ret;
+	return v->vals;
 }
 
 void vector_destroy(struct vector *v) { free(v->vals); }

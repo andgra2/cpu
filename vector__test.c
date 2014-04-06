@@ -109,10 +109,6 @@ int main()
 	printf("}\n");
 	free(arr2);
 
-	printf("\n");
-
-	vector_destroy(&v2);
-
 	return 0;
 }
 
