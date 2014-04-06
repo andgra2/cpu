@@ -292,9 +292,10 @@ bool tok_seq_create(struct tok_seq *ts, const char *s, bool *ok, const char **to
 			ts->toks = vector_move(&vec, &ts->num_toks);
 			tok_seq_destroy(ts);
 			if (ok) *tok_err_pos = p;
-			p = p_new;
 			return false;
 		}
+
+		p = p_new;
 
 		if (!vector_push_back(&vec, &t)) {
 			if (t.type == lit_str) free(t.lit_str.s_beg);
