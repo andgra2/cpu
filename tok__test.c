@@ -1,73 +1,81 @@
 #include "tok.h"
 
-static void print_ch(char c)
+static void print_c(char c)
 {
-	if (char_is_print(c))
+	if (isgraph(c))
 		printf("%c", c);
 	else
 		printf("(%u)", (unsigned) c);
 }
 
-static void print_tok(struct tok *t)
+static void print_tok(const struct tok *t)
 {
 	switch (t->type)
 	{
 	case lit_numb:
-		printf("Literal number: %u", t->lit_numb.val);
+		printf("N	%u", t->lit_numb.val);
 		break;
 	case lit_ch:
-		printf("Literal char: ");
-		print_ch(t->lit_ch.c);
+		printf("C	");
+		print_c(t->lit_ch.c);
 		break;
 	case lit_str:
-		printf("Literal string: ");
-		for (const char *p = t->lit_str.s_beg; p != t->lit_str.s_end; ++p) {
-			if (p != t->lit_str.s_beg) printf(" ");
-			print_ch(*p);
+		printf("S	");
+		for (const char *cp = t->lit_str.s_beg; cp != t->lit_str.s_end; ++cp) {
+			print_c(*cp);
+			if (cp != t->lit_str.s_end) printf(" ");
 		}
 		break;
 	case ident:
-		printf("Identifier: ");
-		for (const char *p = t->beg; p != t->end; ++p)
-			printf("%c", *p);
+		printf("I	%s", t->ident.s);
 		break;
-	case other:
-		printf("Other: ");
-		printf("%c", t->other.c);
+	case punct_op:
+		printf("P	%c", t->punct_op.c);
+		break;
+	case eot:
+		assert(false);
 		break;
 	}
 }
 
 int main()
 {
-	const char s[] = "\
- .data   { x, y, z; arr[] = \"12\\\\df\\x2Fg\"; }\
- .code { add(x, y, z); print_str(arr); exit(); }\
+	bool te;
+	const char *tep;
+	char *te_msg;
+
+	char s[] = "\
+data {\n\
+	i = 0xaf43;\n\
+	s = \"h\\x45js\\101n!\\a\";\n\
+	d[34] = {1, 2, 3};\n\
+}\n\
+\n\
+code {\n\
+	print_str(s);\n\
+	add(i);\n\
+}\n\
 ";
 
-	struct tok_seq ts;
-	bool ok;
-	const char *tok_err_pos;
-	if (!tok_seq_create(&ts, s, &ok, &tok_err_pos)) {
-		if (ok) {
-			printf("Tokenizing error!\n");
-			printf(
-				"Invalid token starting at char pos %u",
-				(unsigned) (tok_err_pos - s)
-			);
-		} else
-			printf("Unexpected error!\n");
+	struct tok *ts;
+	if (!tok_seq_create(&ts, s, &te, &tep, &te_msg)) goto fail_1;
 
-		return -1;
-	}
+	printf("Tokenization result:\n\n");
 
-	for (size_t i = 0; i != ts.num_toks; ++i) {
-		print_tok(ts.toks + i);
+	for (const struct tok *tp = ts; tp->type != eot; ++tp) {
+		print_tok(tp);
 		printf("\n");
 	}
 
-	tok_seq_destroy(&ts);
-
+	tok_seq_destroy(ts);
 	return 0;
+
+fail_1:
+	if (te)	{
+		printf("Token error at %u: %s\n", (unsigned) (tep - s), te_msg);
+		free(te_msg);
+	}
+	else printf("Unexpected error!\n");
+	return -1;
 }
 

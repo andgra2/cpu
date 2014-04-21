@@ -27,9 +27,9 @@ bool vector_create(
 
 void *vector_move(struct vector *v, size_t *num_vals)
 {
-	*num_vals = v->num_vals;
-
 	vector_shrink(v);
+
+	if (num_vals != NULL) *num_vals = v->num_vals;
 
 	return v->vals;
 }

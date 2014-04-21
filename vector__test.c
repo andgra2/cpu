@@ -99,8 +99,8 @@ int main()
 	printf("\n");
 
 	int *arr2;
-	int arr_size;
-	arr2 = vector_move(&v2, (void *) &arr_size);
+	size_t arr_size;
+	arr2 = vector_move(&v2, &arr_size);
 	printf("{");
 	for (int i = 0; i != arr_size; ++i) {
 		if (i != 0) printf(", ");
